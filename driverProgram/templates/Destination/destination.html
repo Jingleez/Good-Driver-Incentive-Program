@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigRig Bonuses - Drive Better, Earn More</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            background-color: #1a1a1a; /* Dark background */
+            overflow-x: hidden;
+        }
+
+        /* Fullscreen background image */
+        .background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background: url('https://th.bing.com/th/id/R.552be69380eee7993da89c385f7251c0?rik=X8RyTk6HNnqkSQ&riu=http%3a%2f%2fwww.aacc.edu%2fmedia%2fcollege%2fimages%2fareas-of-study%2fconstruction-and-trades%2ftruck-driving_shutterstock_10728025_1200x600-1.jpg&ehk=hTMaImWB0onRle%2fKP%2fzCFBBB9QGUybwAs8VF8lGD%2f3g%3d&risl=&pid=ImgRaw&r=0') no-repeat center center/cover;
+            opacity: 0.5;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background-color: transparent; /* Transparent navbar */
+            position: fixed;
+            width: 100%;
+            z-index: 10; /* Set higher than -1 */
+        }
+
+        nav .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        nav .logo img {
+            height: 30px; /* Adjust the height of the logo image to fit */
+            margin-right: 15px; /* Space between the image and text */
+        }
+
+        nav .logo span {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: white; /* Accent color */
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-left: 30px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 400;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #4a90e2;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            position: relative;
+            z-index: 2; /* Higher than -1 */
+        }
+
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-section p {
+            font-size: 1.5rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            color: #d4d4d4;
+        }
+
+        .hero-section a.cta-button {
+            padding: 15px 40px;
+            background-color: #4a90e2;
+            color: #fff;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-section a.cta-button:hover {
+            background-color: #367bb7;
+        }
+
+        /* Features Section */
+        .features-section {
+            background-color: transparent;
+            padding: 80px 0;
+            position: relative;
+            z-index: 1; /* Higher than -1 */
+        }
+
+        .features-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background-color: #2b2b2b;
+            padding: 40px;
+            border-radius: 15px;
+            width: 30%;
+            margin: 20px;
+            text-align: center;
+            transition: transform 0.3s;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-card h2 {
+            font-size: 1.8rem;
+            color: #4a90e2;
+            margin-bottom: 20px;
+        }
+
+        .feature-card p {
+            font-size: 1rem;
+            color: #ccc;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #111;
+            padding: 20px 0;
+            text-align: center;
+            color: #bbb;
+            font-size: 0.9rem;
+            z-index: -1; /* Higher than -1 */
+            position: relative;
+        }
+
+        footer a {
+            color: #4a90e2;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: #367bb7;
+        }
+
+        @media(max-width: 768px) {
+            nav {
+                padding: 20px;
+            }
+
+            nav ul li {
+                margin-left: 20px;
+            }
+
+            .hero-section h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-section p {
+                font-size: 1.2rem;
+            }
+
+            .feature-card {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Image -->
+    <div class="background-container"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">
+            <span>BigRig Bonuses</span>
+        </div>
+        <ul>
+            <li><a href="{{ url_for('main.destination') }}">Home</a></li>
+            {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                <li><a href="{{ url_for('auth.signup') }}">Signup</a></li>
+            {% endif %}
+            <li><a href="{{ url_for('main.about') }}">About</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <h1>Drive Better, Earn More</h1>
+        <p>Track your performance, redeem amazing rewards, and stay on top of your journey to becoming the best driver on the road.</p>
+        <a href="{{ url_for('auth.signup') }}" class="cta-button">Join Now</a>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="features-container">
+            <div class="feature-card">
+                <h2>Track Your Points</h2>
+                <p>Monitor your performance and track your earned points towards exciting rewards.</p>
+            </div>
+            <div class="feature-card">
+                <h2>Redeem Rewards</h2>
+                <p>Browse through our catalog of rewards and use your points to claim amazing prizes.</p>
+            </div>
+            <div class="feature-card">
+                <h2>Improve Your Skills</h2>
+                <p>Earn more points by improving your driving skills and becoming a safer, more efficient driver.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>BigRig Bonuses &copy; 2024</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,177 @@
+{% block content %}
+<h2 style="text-align: center; font-weight: bold; color: #4a90e2; margin-top: 20px;">Manage Your Reward System</h2>
+
+<!-- Main Layout -->
+<div style="display: flex; justify-content: space-between; max-width: 1200px; margin: 40px auto; gap: 20px;">
+    <!-- Left Side: Two Rows -->
+    <div style="flex: 70%; display: flex; flex-direction: column; gap: 20px;">
+        
+        <!-- Row 1: Add New Behavior -->
+        <div style="background-color: #2b2b2b; color: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);">
+            <h4 style="margin-bottom: 20px; color: #4a90e2;">Add New Behavior</h4>
+            <form id="add-behavior-form" method="POST" action="{{ url_for('main.reward_system') }}">
+                {{ behavior_form.hidden_tag() }}
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: bold;">Behavior Name</label>
+                    {{ behavior_form.name(class="form-control", placeholder="Enter behavior name") }}
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: bold;">Type</label>
+                    {{ behavior_form.type(class="form-control") }}
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: bold;">Point Worth</label>
+                    {{ behavior_form.point_value(class="form-control", placeholder="Point worth (+/-)") }}
+                </div>
+                <button type="submit" style="
+                    background-color: #4a90e2;
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    cursor: pointer;">
+                    Add Behavior
+                </button>
+            </form>
+        </div>
+
+        <!-- Row 2: Assign Points -->
+        <div style="background-color: #2b2b2b; color: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);">
+            <h4 style="margin-bottom: 20px; color: #28a745;">Assign Points to Drivers</h4>
+            <form id="assign-points-form" method="POST" action="{{ url_for('main.point_transaction') }}">
+                {{ transaction_form.hidden_tag() }}
+
+                <!-- Driver Dropdown -->
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: bold;">Driver</label>
+                    <select name="driver_id" class="form-control" required>
+                        {% for driver in approved_drivers %}
+                            <option value="{{ driver.user_id }}">
+                                {{ driver.first_name }} {{ driver.last_name }} (User ID: {{ driver.user_id }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Behavior Dropdown -->
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: bold;">Behavior</label>
+                    <select name="behavior_id" class="form-control" required>
+                        {% for behavior in sponsor_behaviors %}
+                            <option value="{{ behavior.id }}">
+                                {{ behavior.name }} ({{ behavior.point_value }} points)
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Reason Field -->
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: bold;">Reason</label>
+                    <textarea name="reason" class="form-control" placeholder="Reason for transaction" required></textarea>
+                </div>
+
+                <button type="submit" style="
+                    background-color: #4a90e2;
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 5px;">
+                    Assign Points
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Right Column: Behaviors List -->
+    <div style="flex: 30%; padding: 20px; background-color: #2b2b2b; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);">
+        <h4 style="color: #4a90e2; text-align: center;">Your Behaviors</h4>
+        <div id="behaviors-list">
+            {% for behavior in sponsor_behaviors %}
+                <div style="margin-bottom: 10px; padding: 10px; border-radius: 5px; position: relative; background-color: {% if behavior.type == 'Good' %}#28a745{% else %}#dc3545{% endif %}; color: white;" id="behavior-{{ behavior.id }}">
+                    <!-- Delete Button -->
+                    <button style="
+                        position: absolute;
+                        top: 5px;
+                        right: 5px;
+                        background: none;
+                        border: none;
+                        color: white;
+                        font-size: 16px;
+                        cursor: pointer;
+                        font-weight: bold;"
+                        onclick="removeBehavior({{ behavior.id }})">X</button>
+                    
+                    <strong>{{ behavior.name }}</strong><br>
+                    Type: {{ behavior.type }}<br>
+                    Points: {{ behavior.point_value }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Popup Notification -->
+<div id="popup" style="display: none; position: fixed; top: 20px; right: 20px; background-color: #333; color: #fff; padding: 15px; border-radius: 5px; z-index: 1000;"></div>
+
+<!-- JavaScript for AJAX -->
+<script>
+    // Add New Behavior
+    document.getElementById('add-behavior-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        fetch("{{ url_for('main.reward_system') }}", {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the behaviors column dynamically
+                document.getElementById('behaviors-list').innerHTML = data.updated_behaviors_html;
+
+                // Show success popup
+                showPopup('New behavior added successfully!', 'green');
+
+                // Clear the form
+                this.reset();
+            } else {
+                showPopup('Error: ' + (data.message || 'Unable to add behavior.'), 'red');
+            }
+        })
+        .catch(() => showPopup('Error: Unable to add behavior. Please try again.', 'red'));
+    });
+
+    // Assign Points to Drivers
+    document.getElementById('assign-points-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        fetch("{{ url_for('main.point_transaction') }}", {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showPopup(data.message, 'green');
+                this.reset();
+            } else {
+                showPopup(data.message, 'red');
+            }
+        })
+        .catch(() => showPopup('Error: Unable to assign points. Please try again.', 'red'));
+    });
+
+    // Popup Notification Function
+    function showPopup(message, color) {
+        const popup = document.getElementById('popup');
+        popup.textContent = message;
+        popup.style.backgroundColor = color;
+        popup.style.display = 'block';
+        setTimeout(() => popup.style.display = 'none', 3000);
+    }
+</script>
+
+{% endblock %}

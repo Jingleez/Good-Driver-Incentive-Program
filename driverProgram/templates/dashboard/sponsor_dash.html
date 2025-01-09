@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sponsor Dashboard</title>
+
+    <!-- Google Fonts for Professional Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+
+    <style>
+        /* General Body Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #1a1a1a; /* Dark background */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Top Navigation Bar */
+        nav.top-nav {
+            background-color: #0b3d91; /* Dark Blue for the Navbar */
+            color: white;
+            padding: 10px 30px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        nav.top-nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        nav.top-nav ul li {
+            margin-left: 30px;
+        }
+
+        nav.top-nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: 500;
+            padding: 10px;
+            transition: background-color 0.3s;
+        }
+
+        nav.top-nav ul li a:hover {
+            background-color: #274c9d;
+            border-radius: 5px;
+        }
+
+        /* Container for Sidebar and Content */
+        .container {
+            display: flex;
+            margin-top: 60px; /* Offset for top nav */
+            height: 100%;
+        }
+
+        /* Sidebar Styling */
+        .sidebar-menu {
+            background-color: #2b2b2b; /* Darker sidebar */
+            color: #fff;
+            padding-top: 20px;
+            width: 250px;
+            height: calc(100vh - 60px); /* Adjust height with top nav */
+            transition: all 0.3s ease;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-menu.collapsed {
+            width: 70px;
+        }
+
+        .sidebar-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu ul li {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .sidebar-menu ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s;
+        }
+
+        .sidebar-menu ul li a:hover {
+            background-color: #3e3e3e;
+            border-radius: 8px;
+        }
+
+        .sidebar-menu ul li a i {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .sidebar-menu.collapsed ul li a span {
+            display: none;
+        }
+
+        /* Sidebar Toggle */
+        .sidebar-toggle {
+            padding: 10px;
+            background-color: #0b3d91;
+            border: none;
+            color: white;
+            position: fixed;
+            top: 70px;
+            left: 260px;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 1001;
+            transition: left 0.3s ease;
+        }
+
+        .collapsed + .sidebar-toggle {
+            left: 90px;
+        }
+
+        /* Main Content Area */
+        .content-area {
+            margin-left: 250px;
+            padding: 40px;
+            flex-grow: 1;
+            background-color: #333; /* Dark content background */
+            color: #fff;
+            border-radius: 10px;
+            margin: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            height: calc(100vh - 110px); /* Full height minus nav and padding */
+            transition: margin-left 0.3s ease;
+        }
+
+        .collapsed + .content-area {
+            margin-left: 90px;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 2em;
+            font-weight: 500;
+            color: #4a90e2; /* Lighter blue for headers */
+        }
+
+        #view-section label {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #94c0f3; /* Slightly lighter blue color for labels */
+        }
+
+        p {
+            line-height: 1.8;
+            font-size: 1.1em;
+            color: #d4d4d4;
+        }
+
+        /* Sidebar collapsed state */
+        .sidebar-menu.collapsed ul li a i {
+            font-size: 1.6em;
+            margin-right: 0;
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar-menu {
+                width: 200px;
+            }
+
+            .collapsed + .sidebar-toggle {
+                left: 80px;
+            }
+
+            .content-area {
+                margin-left: 200px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav.top-nav ul li {
+                margin: 0 5px;
+            }
+
+            .sidebar-menu {
+                width: 150px;
+            }
+
+            .collapsed + .sidebar-toggle {
+                left: 70px;
+            }
+
+            .content-area {
+                margin-left: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <nav class="top-nav">
+        <ul>
+            <li><a href="{{ url_for('main.destination') }}">Home</a></li>
+            <li><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('main.about') }}">About</a></li>
+            {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+            {% endif %}
+        </ul>
+        <ul>
+            <li><a href="{{ url_for('main.profile') }}">Profile</a></li>
+        </ul>
+    </nav>
+
+    <!-- Container for Sidebar and Content -->
+    <div class="container">
+        <!-- Sidebar Menu -->
+        <nav class="sidebar-menu" id="sidebar">
+            <ul>
+                <li><a onclick="loadContent('{{ url_for('main.approve_applications') }}')"><i class="fas fa-check-circle"></i><span>Approve Applications</span></a></li>
+                <li><a onclick="loadContent('{{ url_for('main.sponsor_product_catalog') }}')"><i class="fas fa-box"></i><span>Public Product Catalog</span></a></li>
+                <li><a onclick="loadContent('{{ url_for('main.participating_drivers') }}')"><i class="fas fa-users"></i><span>Participating Drivers</span></a></li>
+                <li><a onclick="loadContent('{{ url_for('main.public_profile') }}')"><i class="fas fa-building"></i><span>Public Profile</span></a></li>
+                <li><a onclick="loadContent('{{ url_for('main.job_postings') }}')"><i class="fas fa-briefcase"></i><span>Job Postings</span></a></li>
+                <li><a onclick="loadContent('{{ url_for('main.view_notifications') }}')"><i class="fas fa-bell"></i><span>Notifications</span></a></li>
+                <li><a onclick="loadContent('{{ url_for('main.sponsor_reports') }}')"><i class="fas fa-bell"></i><span>Generate Reports</span></a></li>
+                <li><a onclick="loadContent('{{ url_for('main.reward_system') }}')"><i class="fas fa-bell"></i><span>Reward System</span></a></li>
+                <li><a onclick="loadContent('{{ url_for('main.sponsor_items') }}')"><i class="fas fa-bell"></i><span>My Prodcuts</span></a></li>
+                <li><a onclick="loadContent('{{ url_for('main.view_orders') }}')"><i class="fas fa-bell"></i><span>Orders</span></a></li>
+            </ul>
+            
+        </nav>
+
+        <!-- Sidebar Toggle Button -->
+        <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+            <section id="dashboard-content">
+                {% if load_public_profile %}
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            loadContent('{{ url_for('main.public_profile') }}');
+                        });
+                    </script>
+                {% elif load_job_postings %}
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            loadContent('{{ url_for('main.job_postings') }}');
+                        });
+                    </script>
+                {% elif load_approve_applications %}
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            loadContent('{{ url_for('main.approve_applications') }}');
+                        });
+                    </script>
+                {% elif load_reward_system %}
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        loadContent('{{ url_for('main.reward_system') }}');
+                    });
+                </script>
+                {% elif load_product_catalog %}
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        loadContent('{{ url_for('main.sponsor_product_catalog') }}');
+                    });
+                </script>
+                {% else %}
+                    <h2>Welcome to the Sponsor Dashboard</h2>
+                    <p>This is where you can manage applications, view drivers, and manage your product catalog.</p>
+                {% endif %}
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Toggle the sidebar on and off
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const contentArea = document.querySelector('.content-area');
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            sidebarToggle.classList.toggle('collapsed');
+            contentArea.classList.toggle('collapsed');
+        });
+
+        function loadContent(url) {
+            console.log("Loading content from:", url);
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    document.getElementById('dashboard-content').innerHTML = html;
+                })
+                .catch(err => {
+                    console.error('Error loading content:', err);
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+        const reportForm = document.getElementById('reportForm');
+        if (reportForm) {
+            reportForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+
+                fetch('/generate_report', {
+                    method: 'POST',
+                    body: formData,
+                })
+                    .then(response => response.text())
+                    .then(html => {
+                        const reportResults = document.getElementById('reportResults');
+                        if (reportResults) {
+                            reportResults.innerHTML = html;
+                        } else {
+                            console.error('Report results container not found.');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        }
+    });
+        
+        // Show Notification Details in Popup
+        function showPopup(notificationId) {
+            fetch(`/notification_details/${notificationId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+
+                    // Populate the popup content
+                    const popupContent = document.getElementById('popupContent');
+                    popupContent.innerHTML = `
+                        <p><strong>First Name:</strong> ${data.first_name}</p>
+                        <p><strong>Last Name:</strong> ${data.last_name}</p>
+                        <p><strong>Email:</strong> ${data.email}</p>
+                        <p><strong>Phone:</strong> ${data.phone}</p>
+                        <p><strong>Date Submitted:</strong> ${data.date_submitted}</p>
+                    `;
+
+                    // Display the popup
+                    const popup = document.getElementById('notificationPopup');
+                    popup.style.display = 'block';
+
+                    // Mark the notification as read
+                    fetch(`/mark_as_read/${notificationId}`, { method: 'POST' })
+                        .then(response => response.json())
+                        .then(() => {
+                            // Remove the unread class from the notification
+                            const notification = document.querySelector(`.notification[data-id='${notificationId}']`);
+                            if (notification) {
+                                notification.classList.remove('unread');
+                            }
+                        });
+                })
+                .catch(error => {
+                    console.error('Error fetching notification details:', error);
+                });
+        }
+
+        // Close Popup
+        function closePopup() {
+            const popup = document.getElementById('notificationPopup');
+            popup.style.display = 'none';
+        }
+
+        // Delete Notification
+        function deleteNotification(notificationId) {
+            if (confirm("Are you sure you want to delete this notification?")) {
+                fetch(`/delete_notification/${notificationId}`, { method: 'DELETE' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove the notification from the page
+                            const notification = document.querySelector(`.notification[data-id='${notificationId}']`);
+                            if (notification) {
+                                notification.remove();
+                            }
+                        } else {
+                            alert("Failed to delete notification.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting notification:', error);
+                        alert("An error occurred. Please try again.");
+                    });
+            }
+        }
+
+        function removeFromCatalog(productId) {
+            fetch('/remove_from_catalog', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ product_id: productId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    document.getElementById(`product-${productId}`).remove();
+                    alert(data.message);
+                } else {
+                    alert(`Error: ${data.error || 'Failed to remove the product.'}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error during fetch:', error);
+                alert('An error occurred. Please try again.');
+            });
+        }
+
+        function removeDriver(driverId) {
+            if (!confirm('Are you sure you want to remove this driver?')) {
+                return;
+            }
+           fetch(`/remove_driver/${driverId}`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json', }, })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message || 'Driver removed successfully.');
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Error removing driver:', error);
+                    alert('An error occurred while removing the driver.');
+                });
+            };
+        
+        
+        // Function to fetch and display a driver's wishlist
+        function viewWishlist(driverId) {
+            fetch(`/wishlist/${driverId}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Wishlist Data:', data);
+
+                    const wishlistContainer = document.getElementById('wishlistItems');
+                    wishlistContainer.innerHTML = '';
+
+                    if (data.wishlist && Array.isArray(data.wishlist) && data.wishlist.length > 0) {
+                        data.wishlist.forEach(item => {
+                            const productCard = document.createElement('div');
+                            productCard.className = 'Item';
+                            productCard.style = `
+                                padding: 15px;
+                                width: 30%;
+                                text-align: center;
+                                background: #f9f9f9;
+                                border: 1px solid #ddd;
+                                border-radius: 8px;
+                                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                            `;
+
+                            productCard.innerHTML = `
+                                <div style="margin-bottom: 10px;">
+                                    <img src="${item.image}" alt="${item.product_name}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px;">
+                                </div>
+                                <div class="Item__title" style="font-size: 1em; font-weight: bold; margin-bottom: 5px; color: #333;">
+                                    ${item.product_name}
+                                </div>
+                                <div class="Item__price" style="font-size: 0.9em; color: #777; margin-bottom: 10px;">
+                                    ${item.product_price} points
+                                </div>
+                                <button onclick="addToCart('${item.product_id}', '${driverId}')"
+                                        style="background-color: #007bff; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer;">
+                                    Add to Cart
+                                </button>
+                            `;
+                            wishlistContainer.appendChild(productCard);
+                        });
+
+                        document.getElementById('wishlistModal').style.display = 'flex';
+                    } else {
+                        wishlistContainer.innerHTML = `<p style="text-align: center; color: #777;">No wishlist items found.</p>`;
+                        document.getElementById('wishlistModal').style.display = 'flex';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching wishlist:', error);
+                    alert('Failed to fetch the wishlist. Please try again.');
+                });
+        }
+
+
+        function closeWishlist() {
+            document.getElementById('wishlistModal').style.display = 'none';
+        }
+
+        function addToCart(productId, userId) {
+            fetch('/add_to_cart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ product_id: productId, user_id: userId }) // Send product_id and user_id
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert(data.message); // Success message
+                } else {
+                    alert(`Error: ${data.error || 'An unexpected error occurred'}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error adding to cart:', error);
+                alert('Failed to add the item to the cart. Please try again.');
+            });
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchDrivers();
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchDrivers(); // Call fetchDrivers after the DOM is fully loaded
+        });
+        
+        function fetchDrivers() {
+            const driverDropdown = document.getElementById('driverDropdown');
+        
+            // Check if the dropdown exists
+            if (!driverDropdown) {
+                console.error('Dropdown element not found!');
+                return;
+            }
+        
+            console.log("Driver dropdown found:", driverDropdown);
+        
+            // Fetch drivers from the server
+            fetch('/drivers')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch drivers');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Fetched drivers:", data);
+                    // Populate the dropdown with driver data
+                    driverDropdown.innerHTML = '<option value="">-- Select Driver --</option>';
+                    data.drivers.forEach(driver => {
+                        const option = document.createElement('option');
+                        option.value = driver.id;
+                        option.textContent = `${driver.first_name} ${driver.last_name} (ID: ${driver.id})`;
+                        driverDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching drivers:', error);
+                    alert('Unable to load drivers. Please try again later.');
+                });
+        }
+        
+        
+        let cartItemsData = [];
+
+        function fetchCartItems() {
+            const driverId = document.getElementById('driverDropdown').value;
+            const cartItemsContainer = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            const cartContainer = document.getElementById('cartContainer');
+            const emptyCartMessage = document.getElementById('emptyCartMessage');
+        
+            cartItemsContainer.innerHTML = '';
+            cartTotal.textContent = 'Total Points: 0';
+            cartContainer.style.display = 'none';
+            emptyCartMessage.style.display = 'none';
+        
+            if (!driverId) return;
+        
+            // Fetch cart items for the selected driver
+            fetch(`/cart/${driverId}`)
+                .then(response => response.json())
+                .then(({ cart }) => {
+                    if (!cart.length) {
+                        emptyCartMessage.style.display = 'block';
+                        return;
+                    }
+        
+                    let totalPoints = 0;
+        
+                    // Loop over each cart item and add it to the UI
+                    cart.forEach(item => {
+                        totalPoints += item.product_price;
+                        cartItemsData.push({
+                            cart_id: item.cart_id, // Ensure cart_id is included
+                            product_id: item.product_id,
+                            product_name: item.product_name,
+                            product_price: item.product_price,
+                        });
+                        const itemCard = `
+                            <div class="cart-item" style="
+                                display: flex; 
+                                align-items: center; 
+                                justify-content: space-between; 
+                                padding: 15px; 
+                                width: 100%; 
+                                background: #2c2f33; 
+                                border: 1px solid #444; 
+                                border-radius: 8px; 
+                                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+                                margin-bottom: 10px;
+                                color: #fff;
+                                transition: transform 0.2s ease, background-color 0.3s ease;">
+                                
+                                <!-- Product Name -->
+                                <div class="product-name" style="flex: 1; text-align: left; font-size: 1.2em; font-weight: bold; color: #fff;">
+                                    ${item.product_name || 'No Name'}
+                                </div>
+
+                                <!-- Product Price -->
+                                <div class="product-price" style="flex: 0 0 120px; text-align: right; font-size: 1.1em; font-weight: bold; color: #4CAF50;">
+                                    ${item.product_price || 0} points
+                                </div>
+
+                                <!-- Remove Button -->
+                                <button onclick="removeFromCart(${item.cart_id})" style="
+                                    background-color: #e74c3c; 
+                                    color: #fff; 
+                                    border: none; 
+                                    padding: 8px 16px; 
+                                    border-radius: 5px; 
+                                    cursor: pointer; 
+                                    font-size: 0.9em; 
+                                    font-weight: bold;
+                                    transition: background-color 0.3s ease;">
+                                    Remove
+                                </button>
+                            </div>
+                        `;
+
+                    // Insert the updated item card into the cart
+                    cartItemsContainer.insertAdjacentHTML('beforeend', itemCard);
+                    
+                    });
+        
+                    cartTotal.textContent = `Total Points: ${totalPoints}`;
+                    cartContainer.style.display = 'block';
+                })
+                .catch(error => console.error('Error fetching cart items:', error));
+        }
+        
+
+        function removeFromCart(cartId) {
+            fetch('/remove_from_cart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cart_id: cartId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                fetchCartItems();
+            })
+            .catch(error => console.error('Error removing item:', error));
+        }
+
+        function checkout() {
+            const driverId = document.getElementById("driverDropdown").value;
+
+            if (!driverId) {
+                alert("Please select a driver before checking out.");
+                return;
+            }
+
+            // Get cart items from the cart container
+            const cartItems = [];
+            document.querySelectorAll("#cartItems .cart-item").forEach(item => {
+                const productNameElement = item.querySelector(".product-name");
+                const productPriceElement = item.querySelector(".product-price");
+
+                // Skip if elements are missing
+                if (!productNameElement || !productPriceElement) {
+                    console.warn("Skipping invalid cart item:", item);
+                    return;
+                }
+
+                const productName = productNameElement.innerText;
+                const productPrice = parseFloat(productPriceElement.innerText);
+
+                cartItems.push({
+                    product_name: productName,
+                    product_price: productPrice
+                });
+            });
+
+            if (cartItems.length === 0) {
+                alert("The cart is empty. Cannot proceed with checkout.");
+                return;
+            }
+
+            // Make a POST request to the backend checkout route
+            fetch("/checkout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    driverId: driverId,
+                    cartItems: cartItems
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Checkout completed successfully!");
+                    document.getElementById("cartContainer").style.display = "none";
+                    document.getElementById("emptyCartMessage").style.display = "block";
+                } else {
+                    alert(`Error: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                console.error("Error during checkout:", error);
+                alert("An error occurred while processing the checkout.");
+            });
+        }
+
+
+        function openModal() {
+            document.getElementById('edit-modal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('edit-modal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('edit-modal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        function removeJobPosting(jobId) {
+        // Confirm before removal
+        if (!confirm("Are you sure you want to remove this job posting?")) return;
+
+        fetch(`/remove_job/${jobId}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove the job card from the DOM
+                const jobCard = document.getElementById(`job-${jobId}`);
+                if (jobCard) jobCard.remove();
+                alert("Job posting removed successfully!");
+            } else {
+                alert("Failed to remove the job posting: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error("Error removing job posting:", error);
+            alert("An error occurred while removing the job posting.");
+        });
+    }
+
+    // Remove Behavior Function
+    function removeBehavior(behaviorId) {
+        if (!confirm("Are you sure you want to remove this behavior?")) return;
+        fetch(`/remove_behavior/${behaviorId}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const behaviorCard = document.getElementById(`behavior-${behaviorId}`);
+                if (behaviorCard) behaviorCard.remove();
+                showPopup('Behavior removed successfully!', 'green');
+            } else {
+                showPopup(data.message || 'Failed to remove behavior.', 'red');
+            }
+        })
+        .catch(() => showPopup('Error: Unable to remove behavior. Please try again.', 'red'));
+    }
+
+    </script>
+</body>
+</html>

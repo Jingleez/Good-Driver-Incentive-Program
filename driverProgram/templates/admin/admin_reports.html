@@ -1,0 +1,35 @@
+<form id="reportForm" action="/admin/reports" method="GET">
+    <label for="reportType">Report Type</label>
+    <select id="reportType" name="reportType">
+        <option value="sales_by_sponsor">Sales by Sponsor</option>
+        <option value="sales_by_driver">Sales by Driver</option>
+        <option value="invoice_report">Invoice Report</option>
+    </select>
+
+    <label for="startDate">Start Date</label>
+    <input type="date" id="startDate" name="startDate">
+
+    <label for="endDate">End Date</label>
+    <input type="date" id="endDate" name="endDate">
+
+    <select id="sponsorId" name="sponsorId">
+        <option value="">All Sponsors</option>
+        {% for sponsor in sponsors %}
+            <option value="{{ sponsor.id }}">{{ sponsor.company_name }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="driverId">Select Driver</label>
+    <select id="driverId" name="driverId">
+        <option value="">All Drivers</option>
+        <!-- Populate drivers -->
+    </select>
+
+    <label for="viewType">View Type</label>
+    <select id="viewType" name="viewType">
+        <option value="summary">Summary</option>
+        <option value="detailed">Detailed</option>
+    </select>
+
+    <button type="submit">Generate Report</button>
+</form>

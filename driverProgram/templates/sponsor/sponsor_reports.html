@@ -1,0 +1,65 @@
+{% block content %}
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">Generate Sponsor Report</h2>
+        <form id="reportForm" action="/generate_report_csv" method="GET">
+            <!-- Select Report Type -->
+            <div class="mb-3">
+                <label for="reportType" class="form-label">Report Type</label>
+                <select class="form-select" id="reportType" name="reportType" required>
+                    <option value="">Select a Report</option>
+                    <option value="driver_point_tracking">Driver Point Tracking</option>
+                    <option value="audit_log">Audit Log Report</option>
+                </select>
+            </div>
+
+            <!-- Date Range Filter -->
+            <div class="row mb-3">
+                <div class="col">
+                    <label for="startDate" class="form-label">Start Date</label>
+                    <input type="date" class="form-control" id="startDate" name="startDate">
+                </div>
+                <div class="col">
+                    <label for="endDate" class="form-label">End Date</label>
+                    <input type="date" class="form-control" id="endDate" name="endDate">
+                </div>
+            </div>
+
+            <!-- Filter by Driver -->
+            <div class="mb-3" id="driverFilter">
+                <label for="driverId" class="form-label">Select Driver</label>
+                <select class="form-select" id="driverId" name="driverId">
+                    <option value="">All Drivers</option>
+                    {% for driver in approved_drivers %}
+                        <option value="{{ driver.user_id }}">{{ driver.first_name }} {{ driver.last_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Audit Log Category Filter -->
+            <div class="mb-3" id="auditCategoryFilter" style="display: none;">
+                <label for="auditCategory" class="form-label">Audit Log Category</label>
+                <select class="form-select" id="auditCategory" name="auditCategory">
+                    <option value="">All Categories</option>
+                    <option value="driver_application">Driver Application</option>
+                    <option value="point_change">Point Change</option>
+                    <option value="password_change">Password Change</option>
+                    <option value="login_attempt">Login Attempt</option>
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary">Download CSV</button>
+        </form>
+    </div>
+
+    <!-- JavaScript for conditional display of filters -->
+    <script>
+        document.getElementById('reportType').addEventListener('change', function () {
+            const reportType = this.value;
+            document.getElementById('driverFilter').style.display = reportType === 'driver_point_tracking' ? 'block' : 'none';
+            document.getElementById('auditCategoryFilter').style.display = reportType === 'audit_log' ? 'block' : 'none';
+        });
+    </script>
+</body>
+{% endblock %}

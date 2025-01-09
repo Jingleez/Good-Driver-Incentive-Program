@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sponsors and Drivers</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #4a90e2; /* Blue background */
+            color: black; /* Black text */
+        }
+        ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        li {
+            list-style-type: disc;
+        }
+    </style>
+</head>
+<body>
+    <section>
+        <h2>Sponsors and Drivers</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sponsor Name</th>
+                    <th>Company Name</th>
+                    <th>Location</th>
+                    <th>Drivers</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sponsor_data in sponsors_with_drivers %}
+                <tr>
+                    <td>{{ sponsor_data.sponsor.user.username }}</td>
+                    <td>{{ sponsor_data.sponsor.company_name }}</td>
+                    <td>{{ sponsor_data.sponsor.location }}</td>
+                    <td>
+                        <ul>
+                            {% for driver in sponsor_data.drivers %}
+                            <li>
+                                UserID: {{ driver.UserID }}; 
+                                JobID: {{ driver.JobID }}; 
+                                Name: {{ driver.Name }}
+                            </li>
+                            {% else %}
+                            <li>No drivers assigned</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</body>
+</html>

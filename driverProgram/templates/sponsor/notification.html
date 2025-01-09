@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications</title>
+    <style>
+        /* General Notification Styling */
+        .notification {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .notification.unread {
+            background-color: #f9f9f9;
+            border-left: 5px solid #007bff;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            float: right;
+        }
+
+        .delete-btn {
+            background: #ff4d4f;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background: #ff7875;
+        }
+    </style>
+</head>
+<body>
+    <h2>Notifications</h2>
+
+    {% if notifications %}
+        {% for notification in notifications %}
+            <div class="notification {% if not notification.is_read %}unread{% endif %}" 
+                 data-id="{{ notification.id }}">
+                <p onclick="showPopup('{{ notification.id }}')">{{ notification.message }}</p>
+                <button class="delete-btn" onclick="deleteNotification('{{ notification.id }}')">Delete</button>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No new notifications</p>
+    {% endif %}
+
+    <!-- Popup for Notification Details -->
+    <div id="notificationPopup" class="popup">
+        <button class="close-btn" onclick="closePopup()">X</button>
+        <div class="popup-content" id="popupContent">
+            <!-- Dynamic content will be inserted here -->
+        </div>
+    </div>
+</body>
+</html>

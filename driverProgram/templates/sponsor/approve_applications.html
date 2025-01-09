@@ -1,0 +1,99 @@
+<section>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 16px;
+        }
+
+        table thead {
+            background-color: #007bff;
+            color: white;
+        }
+
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        button {
+            padding: 8px 12px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .approve-btn {
+            background-color: #28a745;
+        }
+
+        .reject-btn {
+            background-color: #dc3545;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+
+    <h2>Approve Driver Applications</h2>
+    <p>List of driver applications pending approval.</p>
+
+    {% if applications %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Driver Name</th>
+                    <th>Application Date</th>
+                    <th>Status</th>
+                    <th>Reason</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in applications %}
+                <tr>
+                    <td>{{ application.first_name }} {{ application.last_name }}</td>
+                    <td>{{ application.date_submitted.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ application.status }}</td>
+                    <td>
+                        <!-- Single Reason Field -->
+                        <form id="form-{{ application.id }}" action="" method="post">
+                            <input type="text" name="reason" placeholder="Enter reason" required>
+                        </form>
+                    </td>
+                    <td>
+                        <!-- Approve Button -->
+                        <button form="form-{{ application.id }}" formmethod="post"
+                            formaction="{{ url_for('main.approve_application', application_id=application.id) }}"
+                            class="approve-btn">
+                            Approve
+                        </button>
+
+                        <!-- Reject Button -->
+                        <button form="form-{{ application.id }}" formmethod="post"
+                            formaction="{{ url_for('main.reject_application', application_id=application.id) }}"
+                            class="reject-btn">
+                            Reject
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No applications pending approval.</p>
+    {% endif %}
+</section>

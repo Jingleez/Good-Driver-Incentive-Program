@@ -1,0 +1,164 @@
+<head>
+    <title>Audit Logs</title>
+    <style>
+        /* Button Styling */
+        .btn {
+            display: inline-block;
+            margin: 10px 5px;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* General Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #4a90e2;
+            text-transform: uppercase;
+            font-size: 1.8rem;
+        }
+
+        /* Dropdown Filter */
+        label {
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        select {
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #2e2e2e;
+            color: #e0e0e0;
+            border: 1px solid #555;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #2e2e2e;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        th, td {
+            padding: 14px;
+            border-bottom: 1px solid #444;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background-color: #007bff;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        td {
+            color: #f0f0f0;
+        }
+
+        tr:nth-child(even) {
+            background-color: #3e3e3e;
+        }
+
+        tr:hover {
+            background-color: #4d4d4d;
+        }
+
+        /* Highlight success and failure */
+        .success {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .failure {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        /* Responsive Table */
+        @media (max-width: 768px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            thead {
+                display: none;
+            }
+
+            tr {
+                margin-bottom: 10px;
+                border: 1px solid #444;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+
+            td {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px;
+                border-bottom: none;
+            }
+
+            td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #007bff;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Audit Logs</h2>
+
+    <!-- Dropdown Filter -->
+    <label for="logFilter">Select Log Type:</label>
+    <select id="logFilter" onchange="fetchLogs(); updateDownloadLink()">
+        <option value="driver_app">Driver Applications</option>
+        <option value="point_change">Point Changes</option>
+        <option value="password_change">Password Changes</option>
+        <option value="login_attempt">Login Attempts</option>
+    </select>     
+
+    <!-- Single Download Button -->
+    <div style="margin-top: 20px;">
+        <h3>Download Logs as CSV:</h3>
+        <a id="downloadCsvButton" href="/download_audit_logs?log_type=driver_app" class="btn">Download as CSV</a>
+    </div>
+
+    <!-- Logs Table -->
+    <table>
+        <thead id="logHeaders">
+            <!-- Headers will be dynamically added -->
+        </thead>
+        <tbody id="logTableBody">
+            <!-- Rows will be dynamically added -->
+        </tbody>
+    </table>
+</body>
